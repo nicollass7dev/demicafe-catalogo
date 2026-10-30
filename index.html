@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#131517" />
+    <meta name="description" content="Catálogo digital da DEMI Cafeteria: café, cappuccino, sucos e novidades." />
+    <title>DEMI Cafeteria — Catálogo</title>
+    <link rel="preload" href="assets/casquinha-catalogo.jpg" as="image" fetchpriority="high" />
+    <link rel="stylesheet" href="styles.css?v=6" />
+    <script type="module" src="app.js?v=6"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#catalogo">Pular para o catálogo</a>
+
+    <div class="intro" id="intro" aria-hidden="true">
+      <div class="intro__logo">
+        <span class="brand__cup"></span>
+        <span><strong>DEMI</strong><small>CAFETERIA</small></span>
+      </div>
+      <div class="intro__meter"><span id="introBar"></span></div>
+      <output id="introCount">000</output>
+    </div>
+
+    <header class="site-header" id="topo">
+      <a class="brand" href="#topo" aria-label="DEMI Cafeteria, início">
+        <span class="brand__cup" aria-hidden="true"></span>
+        <span><strong>DEMI</strong><small>CAFETERIA</small></span>
+      </a>
+      <nav aria-label="Navegação principal">
+        <a href="#sobre">A DEMI</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#pedidos">Como pedir</a>
+      </nav>
+      <button class="selection-trigger" id="selectionTrigger" type="button" aria-controls="selectionDrawer" aria-expanded="false">
+        Seleção <span id="selectionCount" aria-label="0 itens">0</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__copy">
+          <p class="eyebrow"><span></span> Catálogo 2026 · edição 01</p>
+          <h1 id="hero-title">Café para o<br /><em>seu momento.</em></h1>
+          <p class="hero__lead">Café, cappuccino, sucos e a casquinha trufada.</p>
+          <div class="hero__actions">
+            <a class="button button--gold" href="#catalogo">Explorar catálogo</a>
+            <a class="button button--line contact-link" href="https://www.instagram.com/demicafeteria/" target="_blank" rel="noreferrer">Falar com a DEMI</a>
+          </div>
+          <p class="hero__note">Preços e disponibilidade sob consulta.</p>
+        </div>
+        <figure class="hero__media">
+          <img src="assets/casquinha-catalogo.jpg" alt="Imagem ilustrativa de café servido em casquinha com chocolate" width="1000" height="1000" />
+          <figcaption><span>DESTAQUE 01</span> Café na casquinha trufada · imagem ilustrativa</figcaption>
+        </figure>
+        <div class="hero__index" aria-hidden="true">DEMI / 01</div>
+        <div class="hero__rail" aria-label="Resumo do catálogo"><span>04 itens</span><span>05 categorias</span><span>preços sob consulta</span></div>
+      </section>
+
+      <section class="about section" id="sobre" aria-labelledby="about-title">
+        <div>
+          <p class="eyebrow"><span></span> Sobre a casa</p>
+          <h2 id="about-title">Feita para <em>gente feliz.</em></h2>
+        </div>
+        <div class="about__text">
+          <p>Cafés, cappuccinos, sucos e novidades. Por <strong>Euclésio Peniel e Débora</strong>.</p>
+          <p class="source-note">Informações verificadas no perfil público <a href="https://www.instagram.com/demicafeteria/" target="_blank" rel="noreferrer">@demicafeteria</a>.</p>
+        </div>
+        <div class="about__line" aria-hidden="true"><span></span></div>
+      </section>
+
+      <section class="catalog-rail" aria-label="Informações rápidas">
+        <div><small>CATÁLOGO</small><strong>04</strong><span>itens listados</span></div>
+        <div><small>LINHAS</small><strong>05</strong><span>categorias</span></div>
+        <div><small>VALORES</small><strong>—</strong><span>sob consulta</span></div>
+        <div><small>CANAL</small><strong>@</strong><span>Instagram oficial</span></div>
+      </section>
+
+      <section class="category-strip section" aria-labelledby="categories-title">
+        <div class="section-heading">
+          <p class="eyebrow"><span></span> Navegue por categoria</p>
+          <h2 id="categories-title">Linhas do catálogo</h2>
+        </div>
+        <div class="category-grid" id="categoryGrid"></div>
+      </section>
+
+      <section class="catalog section" id="catalogo" aria-labelledby="catalog-title">
+        <div class="catalog__heading">
+          <div>
+            <p class="eyebrow"><span></span> Catálogo</p>
+            <h2 id="catalog-title">Produtos</h2>
+          </div>
+          <p id="resultCount" aria-live="polite"></p>
+        </div>
+
+        <div class="catalog__toolbar">
+          <label class="search-field">
+            <span class="sr-only">Pesquisar produtos</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <input id="searchInput" type="search" placeholder="Buscar por nome, código ou descrição" autocomplete="off" />
+          </label>
+          <button class="filter-mobile" id="filterToggle" type="button" aria-controls="filterPanel" aria-expanded="false">Filtros</button>
+          <label class="sort-field">Ordenar
+            <select id="sortSelect">
+              <option value="featured">Destaques</option>
+              <option value="name">Nome A–Z</option>
+              <option value="price-asc">Menor preço</option>
+              <option value="price-desc">Maior preço</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="catalog__layout">
+          <aside class="filters" id="filterPanel" aria-label="Filtros do catálogo">
+            <div class="filters__header">
+              <h3>Filtros</h3>
+              <button id="filterClose" type="button" aria-label="Fechar filtros">×</button>
+            </div>
+            <fieldset>
+              <legend>Categoria</legend>
+              <div id="categoryFilters"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Disponibilidade</legend>
+              <label><input type="checkbox" id="availableOnly" /> Sob consulta</label>
+            </fieldset>
+            <button class="clear-button" id="clearFilters" type="button">Limpar filtros</button>
+          </aside>
+
+          <div class="catalog__content">
+            <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+            <div class="product-grid" id="productGrid"></div>
+            <div class="empty-state" id="emptyState" hidden>
+              <span>0 resultados</span>
+              <h3>Nenhum item encontrado</h3>
+              <p>Tente outro termo ou remova os filtros ativos.</p>
+              <button class="button button--gold" type="button" data-clear>Limpar filtros</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ordering section" id="pedidos" aria-labelledby="ordering-title">
+        <div>
+          <p class="eyebrow"><span></span> Como pedir</p>
+          <h2 id="ordering-title">Escolha.<br /><em>Selecione. Peça.</em></h2>
+        </div>
+        <ol>
+          <li><span>01</span><strong>Explore</strong><p>Busque e filtre.</p></li>
+          <li><span>02</span><strong>Selecione</strong><p>Monte sua lista.</p></li>
+          <li><span>03</span><strong>Converse</strong><p>Confirme no canal oficial.</p></li>
+        </ol>
+      </section>
+
+      <section class="final-cta section" aria-labelledby="cta-title">
+        <p>DEMI CAFETERIA</p>
+        <h2 id="cta-title">Qual vai ser o seu <em>momento DEMI?</em></h2>
+        <a class="button button--gold contact-link" href="https://www.instagram.com/demicafeteria/" target="_blank" rel="noreferrer">Falar com a DEMI</a>
+        <small>Atendimento, preços e disponibilidade pelo canal oficial.</small>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="#topo" aria-label="Voltar ao topo"><span class="brand__cup" aria-hidden="true"></span><span><strong>DEMI</strong><small>CAFETERIA</small></span></a>
+      <p>Café · Cappuccino · Sucos · Variedades</p>
+      <div><a href="https://www.instagram.com/demicafeteria/" target="_blank" rel="noreferrer">Instagram ↗</a><a href="#catalogo">Catálogo</a></div>
+      <small>© <span id="year"></span> DEMI Cafeteria. Catálogo informativo.</small>
+    </footer>
+
+    <dialog class="product-dialog" id="productDialog" aria-labelledby="dialogTitle">
+      <button class="dialog-close" type="button" aria-label="Fechar detalhes">×</button>
+      <div id="dialogContent"></div>
+    </dialog>
+
+    <aside class="selection-drawer" id="selectionDrawer" aria-labelledby="selectionTitle" aria-hidden="true">
+      <div class="selection-drawer__header">
+        <div><p class="eyebrow"><span></span> Lista de interesse</p><h2 id="selectionTitle">Sua seleção</h2></div>
+        <button id="selectionClose" type="button" aria-label="Fechar seleção">×</button>
+      </div>
+      <div id="selectionItems" class="selection-items"></div>
+      <div class="selection-drawer__footer">
+        <button class="button button--gold" id="sendSelection" type="button">Enviar seleção</button>
+        <button class="clear-button" id="clearSelection" type="button">Limpar seleção</button>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
