@@ -127,7 +127,6 @@ function initScrollMotion() {
     [".section-heading > *", "default"],
     [".catalog__heading > *", "default"],
     [".catalog__toolbar", "line"],
-    [".filters", "default"],
     [".ordering > div, .ordering li", "default"],
     [".final-cta > *", "default"],
     ["footer > *", "default"],
@@ -240,6 +239,7 @@ function openDrawer(drawer) {
 function closeDrawers() {
   els.selectionDrawer.classList.remove("is-open"); els.selectionDrawer.setAttribute("aria-hidden", "true");
   els.filters.classList.remove("is-open"); els.filterToggle.setAttribute("aria-expanded", "false"); els.selectionTrigger.setAttribute("aria-expanded", "false");
+  els.filters.setAttribute("aria-hidden", matchMedia("(max-width: 760px)").matches ? "true" : "false");
   els.scrim.hidden = true; document.body.classList.remove("drawer-open");
 }
 
@@ -294,6 +294,7 @@ els.sendSelection.addEventListener("click", async () => {
   await contact(`Olá! Gostaria de saber mais sobre estes produtos da DEMI Cafeteria:\n${lines}`);
 });
 document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeDrawers(); });
+addEventListener("pageshow", (event) => { if (event.persisted) closeDrawers(); });
 
 document.querySelectorAll(".contact-link").forEach((link) => {
   if (BUSINESS.whatsapp) {
@@ -303,4 +304,4 @@ document.querySelectorAll(".contact-link").forEach((link) => {
 });
 
 $("#year").textContent = new Date().getFullYear();
-renderCategories(); renderProducts(); renderSelection(); initScrollMotion(); startIntro();
+renderCategories(); renderProducts(); renderSelection(); closeDrawers(); initScrollMotion(); startIntro();
