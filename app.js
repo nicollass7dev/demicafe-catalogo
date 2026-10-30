@@ -9,6 +9,9 @@ const state = {
 };
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
+const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+let revealObserver;
+let scrollFrame = 0;
 const els = {
   intro: $("#intro"), introBar: $("#introBar"), introCount: $("#introCount"),
   categoryGrid: $("#categoryGrid"), categoryFilters: $("#categoryFilters"),
@@ -21,7 +24,7 @@ const els = {
 };
 
 function startIntro() {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { els.intro.classList.add("is-done"); return; }
+  if (prefersReducedMotion.matches) { els.intro.classList.add("is-done"); return; }
   let value = 0;
   const tick = () => {
     value += value < 72 ? 4 : 7;
@@ -92,6 +95,69 @@ function renderProducts() {
   els.resultCount.textContent = `${list.length} ${list.length === 1 ? "item encontrado" : "itens encontrados"}`;
   renderActiveFilters();
   renderCategories();
+  prepareMotion(els.productGrid);
+  prepareMotion(els.categoryGrid);
+}
+
+function prepareMotion(scope = document) {
+  if (!revealObserver) return;
+  const targets = scope.matches?.(".product-card, .category-card") ? [scope] : [...scope.querySelectorAll(".product-card, .category-card")];
+  targets.forEach((element, index) => {
+    element.dataset.reveal = "scale";
+    element.style.setProperty("--reveal-delay", `${Math.min(index % 4, 3) * 70}ms`);
+    revealObserver.observe(element);
+  });
+}
+
+function initScrollMotion() {
+  if (prefersReducedMotion.matches || !("IntersectionObserver" in window)) return;
+
+  document.documentElement.classList.add("motion-ready");
+  revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold: .12, rootMargin: "0px 0px -9%" });
+
+  const groups = [
+    [".about > div:not(.about__line)", "default"],
+    [".catalog-rail > div", "scale"],
+    [".section-heading > *", "default"],
+    [".catalog__heading > *", "default"],
+    [".catalog__toolbar", "line"],
+    [".filters", "default"],
+    [".ordering > div, .ordering li", "default"],
+    [".final-cta > *", "default"],
+    ["footer > *", "default"],
+  ];
+
+  groups.forEach(([selector, variant]) => {
+    document.querySelectorAll(selector).forEach((element, index) => {
+      element.dataset.reveal = variant;
+      element.style.setProperty("--reveal-delay", `${Math.min(index, 3) * 85}ms`);
+      revealObserver.observe(element);
+    });
+  });
+  prepareMotion(document);
+
+  const updateScrollEffects = () => {
+    scrollFrame = 0;
+    const maxScroll = Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+    document.documentElement.style.setProperty("--scroll-progress", `${Math.min(scrollY / maxScroll * 100, 100)}%`);
+    const hero = $(".hero");
+    if (hero && hero.getBoundingClientRect().bottom > 0) {
+      const shift = Math.min(Math.max(scrollY * .075 - 32, -32), 36);
+      $(".hero__media img")?.style.setProperty("--hero-shift", `${shift}px`);
+    }
+  };
+  const requestScrollUpdate = () => {
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollEffects);
+  };
+  addEventListener("scroll", requestScrollUpdate, { passive: true });
+  addEventListener("resize", requestScrollUpdate, { passive: true });
+  updateScrollEffects();
 }
 
 function renderActiveFilters() {
@@ -237,4 +303,4 @@ document.querySelectorAll(".contact-link").forEach((link) => {
 });
 
 $("#year").textContent = new Date().getFullYear();
-renderCategories(); renderProducts(); renderSelection(); startIntro();
+renderCategories(); renderProducts(); renderSelection(); initScrollMotion(); startIntro();
